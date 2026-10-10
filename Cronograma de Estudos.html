@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Cronograma de Estudos</title>
+<style>
+:root{--bg:#070b14;--panel:#0e1524;--panel2:#141d31;--line:#1f2b45;--text:#e6edf8;--mut:#7f8fb0;--acc:#22d3ee;--acc2:#a78bfa;--ok:#34d399;--bad:#f87171;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);color-scheme:dark}
+*,*:before,*:after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:radial-gradient(900px 500px at 80% -10%,#13204a55,transparent),var(--bg);color:var(--text);font:15px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100vh;padding-bottom:calc(76px + env(safe-area-inset-bottom,0px))}
+header.top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 16px 4px;max-width:1100px;margin:auto}
+h1{font-size:20px;margin:0;letter-spacing:.3px}
+h1 span{background:linear-gradient(90deg,var(--acc),var(--acc2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.pill{font:12px ui-monospace,Menlo,monospace;color:var(--mut);border:1px solid var(--line);padding:4px 10px;border-radius:99px;white-space:nowrap}
+.pill i{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--mut);margin-right:6px}
+.pill.on i{background:var(--ok);box-shadow:0 0 8px var(--ok)}
+main{max-width:1100px;margin:auto;padding:12px 16px}
+nav{position:fixed;left:0;right:0;bottom:0;display:flex;justify-content:space-around;background:#0b1120ee;backdrop-filter:blur(12px);border-top:1px solid var(--line);padding:8px 8px calc(8px + env(safe-area-inset-bottom,0px));z-index:5}
+nav button{flex:1;background:none;border:0;color:var(--mut);font:600 12px system-ui;padding:8px 4px;border-radius:10px}
+nav button b{display:block;font-size:18px}
+nav button.on{color:var(--acc);background:#22d3ee14}
+@media(min-width:800px){nav{position:static;max-width:1100px;margin:8px auto 0;border:0;background:none;justify-content:flex-start;gap:6px;padding:0 16px}nav button{flex:none;font-size:14px;padding:8px 16px;border:1px solid var(--line)}nav button b{display:inline;font-size:14px;margin-right:6px}body{padding-bottom:24px}}
+.grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px}
+.card.today{border-color:var(--acc);box-shadow:0 0 0 1px #22d3ee33,0 0 24px #22d3ee14}
+.card header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+h3{margin:0;font-size:15px}
+.mut{color:var(--mut);margin:6px 0;font-size:13px}
+.blk{position:relative;border-left:3px solid var(--c);background:var(--panel2);border-radius:8px;padding:8px 28px 8px 10px;margin-bottom:8px;display:flex;flex-direction:column;gap:2px;font-size:13px}
+.blk b{font:600 12px ui-monospace,Menlo,monospace;color:var(--c)}
+.x{position:absolute;right:6px;top:6px;background:none;border:0;color:var(--mut);font-size:18px;line-height:1}
+.chip{font-size:11px;color:var(--c);border:1px solid var(--c);border-radius:99px;padding:1px 8px;align-self:flex-start}
+button{font:inherit;cursor:pointer}
+.icon{width:32px;height:32px;border-radius:9px;border:1px solid var(--line);background:var(--panel2);color:var(--acc);font-size:16px}
+.pri{background:linear-gradient(90deg,var(--acc),var(--acc2));color:#04101c;border:0;border-radius:10px;padding:10px 16px;font-weight:700}
+.ghost{background:none;border:1px solid var(--line);color:var(--text);border-radius:10px;padding:10px 16px}
+.bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;gap:8px}
+.task{display:flex;align-items:center;gap:12px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:8px}
+.task input{width:22px;height:22px;accent-color:var(--acc)}
+.task .t{flex:1}.task.done .t b{text-decoration:line-through;color:var(--mut)}
+.task small{color:var(--mut)}.late{color:var(--bad)!important}
+.clock{font:700 64px ui-monospace,Menlo,monospace;text-align:center;margin:12px 0;letter-spacing:2px;text-shadow:0 0 24px #22d3ee55}
+.row{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:8px 0}
+.row button.on{border-color:var(--acc);color:var(--acc)}
+.stat{display:flex;align-items:center;gap:8px;margin:6px 0;font-size:13px}
+.stat div{height:8px;border-radius:4px;background:var(--c);min-width:2px}
+dialog{background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:16px;width:min(92vw,400px);padding:18px}
+dialog::backdrop{background:#000a}
+dialog label{display:block;font-size:13px;color:var(--mut);margin:10px 0 4px}
+input[type=text],input[type=time],input[type=date],select{width:100%;background:var(--bg);color:var(--text);border:1px solid var(--line);border-radius:10px;padding:10px;font:16px system-ui}
+dialog .row{justify-content:flex-end;margin-top:16px}
+</style>
+</head>
+<body>
+<header class="top"><h1>📅 <span>Cronograma</span></h1><div class="pill" id="st"><i></i>carregando</div></header>
+<nav id="nav"></nav>
+<main id="app"></main>
+<dialog id="dlg"></dialog>
+<script>
+const DAYS=["Segunda","Terça","Quarta","Quinta","Sexta","Sábado","Domingo"];
+const COLORS=["#22d3ee","#a78bfa","#34d399","#fbbf24","#f472b6","#60a5fa"];
+const SUGGEST=["Cálculo A","Geometria Analítica","Matemática Discreta","Introdução à Programação","Introdução aos Cursos"];
+const TABS=[["week","🗓️","Semana"],["tasks","✅","Tarefas"],["focus","⏱️","Foco"],["subjects","📚","Disciplinas"]];
+const $=s=>document.querySelector(s);
+const uid=()=>Math.random().toString(36).slice(2,9);
+const esc=t=>String(t).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const ymd=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+const emptyState=()=>({subjects:[],blocks:[],tasks:[],sessions:[]});
+let S=emptyState(), tab="week", ref=null, saveT;
+let T={mode:25,left:1500,run:false,end:0,subj:"",iv:null};
+
+const subj=id=>S.subjects.find(s=>s.id===id);
+const chip=id=>{const s=subj(id);return s?`<span class="chip" style="--c:${s.color}">${esc(s.name)}</span>`:""};
+const opts=(sel)=>`<option value="">Sem disciplina</option>`+S.subjects.map(s=>`<option value="${s.id}" ${s.id===sel?"selected":""}>${esc(s.name)}</option>`).join("");
+
+/* ---------- Armazenamento: nuvem (db) se logado, senão localStorage ---------- */
+function setStatus(msg,on){const e=$("#st");e.className="pill"+(on?" on":"");e.innerHTML="<i></i>"+msg}
+function save(){
+  render();
+  clearTimeout(saveT);
+  saveT=setTimeout(async()=>{
+    try{
+      if(ref){await ref.set(S);setStatus("sincronizado",true)}
+      else{localStorage.setItem("cronograma",JSON.stringify(S));setStatus("só neste aparelho")}
+    }catch(e){setStatus("erro ao salvar")}
+  },400);
+}
+async function init(){
+  try{const raw=localStorage.getItem("cronograma");if(raw)S={...emptyState(),...JSON.parse(raw)}}catch(e){}
+  setStatus("só neste aparelho");render();
+  if(!(window.claude&&claude.use))return;
+  try{
+    const [user,db]=await Promise.all([claude.use("user"),claude.use("db")]);
+    if(!user||!db)return;
+    const id=await user.id();
+    ref=db.collection("data/users/"+id).doc("cronograma");
+    ref.onSnapshot(snap=>{
+      if(snap.metadata.hasPendingWrites)return;
+      if(snap.exists)S={...emptyState(),...snap.data()};
+      else if(S.subjects.length||S.tasks.length||S.blocks.length)ref.set(S);
+      setStatus("sincronizado",true);render();
+    },()=>setStatus("erro de sincronização"));
+  }catch(e){}
+}
+
+/* ---------- Diálogo genérico ---------- */
+function ask(title,html,ok){
+  const d=$("#dlg");
+  d.innerHTML=`<form method="dialog"><h3>${title}</h3>${html}<div class="row"><button class="ghost" value="x" formnovalidate>Cancelar</button><button class="pri" value="ok">Salvar</button></div></form>`;
+  d.onclose=()=>{if(d.returnValue==="ok")ok(new FormData(d.querySelector("form")));d.returnValue=""};
+  d.showModal();
+}
+
+/* ---------- Telas ---------- */
+function vWeek(){
+  const td=(new Date().getDay()+6)%7;
+  return `<div class="grid">${DAYS.map((n,i)=>{
+    const bs=S.blocks.filter(b=>b.day===i).sort((a,b)=>a.start.localeCompare(b.start));
+    return `<section class="card ${i===td?"today":""}"><header><h3>${n}</h3><button class="icon" data-act="addblock" data-day="${i}">＋</button></header>
+    ${bs.map(b=>`<div class="blk" style="--c:${subj(b.subj)?.color||"#64748b"}"><b>${b.start}–${b.end}</b><span>${esc(b.title)}</span>${chip(b.subj)}<button class="x" data-act="delblock" data-id="${b.id}">×</button></div>`).join("")||'<p class="mut">Livre</p>'}</section>`}).join("")}</div>`;
+}
+function vTasks(){
+  const hoje=new Date(ymd(new Date())+"T00:00");
+  const L=[...S.tasks].sort((a,b)=>(a.done-b.done)||(a.due||"9").localeCompare(b.due||"9"));
+  return `<div class="bar"><h3>Provas, trabalhos e listas</h3><button class="pri" data-act="addtask">+ Nova</button></div>`+
+  (L.map(t=>{
+    let when="";
+    if(t.due){const d=Math.round((new Date(t.due+"T00:00")-hoje)/864e5);
+      when=d<0?`<small class="late">atrasada ${-d}d</small>`:d===0?`<small class="late">hoje</small>`:`<small>em ${d} dia${d>1?"s":""}</small>`}
+    return `<div class="task ${t.done?"done":""}"><input type="checkbox" ${t.done?"checked":""} data-act="toggle" data-id="${t.id}"><div class="t"><b>${esc(t.title)}</b><br>${chip(t.subj)} ${when}</div><button class="x" style="position:static" data-act="deltask" data-id="${t.id}">×</button></div>`}).join("")||'<p class="mut">Nada por aqui ainda. Adicione sua próxima prova ou lista.</p>');
+}
+function fmt(s){return String(Math.floor(s/60)).padStart(2,"0")+":"+String(s%60).padStart(2,"0")}
+function vFocus(){
+  const hoje=ymd(new Date()), sem=new Date(Date.now()-6*864e5);
+  const mh=S.sessions.filter(s=>s.date===hoje).reduce((a,s)=>a+s.min,0);
+  const ws=S.sessions.filter(s=>new Date(s.date+"T00:00")>=new Date(ymd(sem)+"T00:00"));
+  const by={};ws.forEach(s=>by[s.subj||""]=(by[s.subj||""]||0)+s.min);
+  const mx=Math.max(1,...Object.values(by));
+  return `<div class="card"><div class="row">${[[25,"Foco 25"],[50,"Foco 50"],[5,"Pausa 5"]].map(([m,l])=>`<button class="ghost ${T.mode===m?"on":""}" data-act="mode" data-m="${m}">${l}</button>`).join("")}</div>
+  <div class="clock" id="clock">${fmt(T.left)}</div>
+  <div class="row"><select id="fs" style="max-width:260px" data-act="fsubj">${opts(T.subj)}</select></div>
+  <div class="row"><button class="pri" data-act="start">${T.run?"Pausar":"Iniciar"}</button><button class="ghost" data-act="reset">Zerar</button></div></div>
+  <div class="card" style="margin-top:12px"><h3>Hoje: ${mh} min · Últimos 7 dias</h3>
+  ${Object.keys(by).map(k=>`<div class="stat"><span style="width:110px">${esc(subj(k)?.name||"Geral")}</span><div style="--c:${subj(k)?.color||"#64748b"};width:${by[k]/mx*55}%"></div>${by[k]} min</div>`).join("")||'<p class="mut">Complete um bloco de foco para ver estatísticas.</p>'}</div>`;
+}
+function vSubjects(){
+  return `<div class="bar"><h3>Disciplinas</h3><button class="pri" data-act="addsubj">+ Nova</button></div>`+
+  (S.subjects.map(s=>`<div class="task"><span class="chip" style="--c:${s.color}">●</span><div class="t"><b>${esc(s.name)}</b></div><button class="x" style="position:static" data-act="delsubj" data-id="${s.id}">×</button></div>`).join("")||
+  `<p class="mut">Comece adicionando suas disciplinas.</p><button class="ghost" data-act="suggest">Adicionar sugestões do 1º período</button>`);
+}
+function render(){
+  $("#nav").innerHTML=TABS.map(([k,i,l])=>`<button class="${tab===k?"on":""}" data-act="tab" data-t="${k}"><b>${i}</b>${l}</button>`).join("");
+  const keep=document.activeElement&&document.activeElement.id==="fs";
+  $("#app").innerHTML={week:vWeek,tasks:vTasks,focus:vFocus,subjects:vSubjects}[tab]();
+}
+
+/* ---------- Timer (usa horário final: continua certo se a aba dormir) ---------- */
+function tick(){
+  T.left=Math.max(0,Math.round((T.end-Date.now())/1000));
+  const c=$("#clock");if(c)c.textContent=fmt(T.left);
+  document.title=T.run?fmt(T.left)+" · Foco":"Cronograma de Estudos";
+  if(T.left===0){
+    clearInterval(T.iv);T.run=false;
+    if(T.mode!==5){S.sessions.push({date:ymd(new Date()),min:T.mode,subj:T.subj});if(navigator.vibrate)navigator.vibrate(300)}
+    T.left=T.mode*60;save();
+  }
+}
+
+/* ---------- Ações (delegação de eventos) ---------- */
+document.addEventListener("click",e=>{
+  const el=e.target.closest("[data-act]");if(!el||el.tagName==="SELECT")return;
+  const a=el.dataset.act,id=el.dataset.id;
+  if(a==="tab"){tab=el.dataset.t;render()}
+  else if(a==="addblock"){const day=+el.dataset.day;
+    ask("Novo bloco — "+DAYS[day],`<label>O que estudar</label><input type="text" name="title" required><label>Disciplina</label><select name="subj">${opts()}</select><label>Início</label><input type="time" name="start" value="14:00" required><label>Fim</label><input type="time" name="end" value="15:30" required>`,
+    f=>{S.blocks.push({id:uid(),day,title:f.get("title"),subj:f.get("subj"),start:f.get("start"),end:f.get("end")});save()})}
+  else if(a==="delblock"){S.blocks=S.blocks.filter(b=>b.id!==id);save()}
+  else if(a==="addtask"){
+    ask("Nova tarefa",`<label>Título</label><input type="text" name="title" required><label>Disciplina</label><select name="subj">${opts()}</select><label>Data</label><input type="date" name="due">`,
+    f=>{S.tasks.push({id:uid(),title:f.get("title"),subj:f.get("subj"),due:f.get("due"),done:false});save()})}
+  else if(a==="toggle"){const t=S.tasks.find(x=>x.id===id);t.done=!t.done;save()}
+  else if(a==="deltask"){S.tasks=S.tasks.filter(t=>t.id!==id);save()}
+  else if(a==="addsubj"){
+    ask("Nova disciplina",`<label>Nome</label><input type="text" name="name" required>`,
+    f=>{S.subjects.push({id:uid(),name:f.get("name"),color:COLORS[S.subjects.length%COLORS.length]});save()})}
+  else if(a==="delsubj"){S.subjects=S.subjects.filter(s=>s.id!==id);save()}
+  else if(a==="suggest"){SUGGEST.forEach((n,i)=>S.subjects.push({id:uid(),name:n,color:COLORS[i%COLORS.length]}));save()}
+  else if(a==="mode"){clearInterval(T.iv);T={...T,mode:+el.dataset.m,left:+el.dataset.m*60,run:false};render()}
+  else if(a==="start"){
+    if(T.run){clearInterval(T.iv);T.run=false;tick()}
+    else{T.run=true;T.end=Date.now()+T.left*1000;T.iv=setInterval(tick,500)}
+    render();
+  }
+  else if(a==="reset"){clearInterval(T.iv);T.run=false;T.left=T.mode*60;render()}
+});
+document.addEventListener("change",e=>{if(e.target.dataset.act==="fsubj")T.subj=e.target.value});
+init();
+</script>
+</body>
+</html>
